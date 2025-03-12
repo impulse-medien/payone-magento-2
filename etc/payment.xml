@@ -43,6 +43,9 @@
         <method name="payone_paypal">
             <allow_multiple_address>0</allow_multiple_address>
         </method>
+        <method name="payone_paypalv2">
+            <allow_multiple_address>0</allow_multiple_address>
+        </method>
         <method name="payone_advance_payment">
             <allow_multiple_address>0</allow_multiple_address>
         </method>
@@ -52,9 +55,9 @@
         <method name="payone_obt_sofortueberweisung">
             <allow_multiple_address>0</allow_multiple_address>
         </method>
-        <method name="payone_obt_giropay">
+        <!--method name="payone_obt_giropay">
             <allow_multiple_address>0</allow_multiple_address>
-        </method>
+        </method Giropay has been disabled, Paydirekt is now Giropay -->
         <method name="payone_obt_eps">
             <allow_multiple_address>0</allow_multiple_address>
         </method>
@@ -94,6 +97,9 @@
         <method name="payone_amazonpay">
             <allow_multiple_address>0</allow_multiple_address>
         </method>
+        <method name="payone_amazonpayv2">
+            <allow_multiple_address>0</allow_multiple_address>
+        </method>
         <method name="payone_klarna_base">
             <allow_multiple_address>0</allow_multiple_address>
         </method>
@@ -130,9 +136,9 @@
         <method name="payone_bnpl_invoice">
             <allow_multiple_address>0</allow_multiple_address>
         </method>
-        <!--BNPL_DEBIT_DEACTIVATED method name="payone_bnpl_debit">
+        <method name="payone_bnpl_debit">
             <allow_multiple_address>0</allow_multiple_address>
-        </method-->
+        </method>
         <method name="payone_bnpl_installment">
             <allow_multiple_address>0</allow_multiple_address>
         </method>

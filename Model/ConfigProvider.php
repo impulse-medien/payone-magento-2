@@ -27,6 +27,7 @@
 namespace Payone\Core\Model;
 
 use Payone\Core\Model\Methods\BNPL\BNPLBase;
+use Payone\Core\Model\Methods\PayoneMethod;
 use Payone\Core\Model\PayoneConfig;
 use Payone\Core\Model\Methods\OnlineBankTransfer\Eps;
 use Payone\Core\Model\Methods\OnlineBankTransfer\Ideal;
@@ -141,6 +142,13 @@ class ConfigProvider extends \Magento\Payment\Model\CcGenericConfigProvider
     protected $toolkitHelper;
 
     /**
+     * PAYONE ratepay helper
+     *
+     * @var \Payone\Core\Helper\Ratepay
+     */
+    protected $ratepayHelper;
+
+    /**
      * Constructor
      *
      * @param \Magento\Payment\Model\CcConfig                      $ccConfig
@@ -159,6 +167,7 @@ class ConfigProvider extends \Magento\Payment\Model\CcGenericConfigProvider
      * @param \Payone\Core\Model\ResourceModel\SavedPaymentData    $savedPaymentData
      * @param \Payone\Core\Model\Methods\Ratepay\Installment\Proxy $ratepayInstallment
      * @param \Payone\Core\Helper\Toolkit                          $toolkitHelper
+     * @param \Payone\Core\Helper\Ratepay                          $ratepayHelper
      */
     public function __construct(
         \Magento\Payment\Model\CcConfig $ccConfig,
@@ -176,7 +185,8 @@ class ConfigProvider extends \Magento\Payment\Model\CcGenericConfigProvider
         \Payone\Core\Helper\Shop $shopHelper,
         \Payone\Core\Model\ResourceModel\SavedPaymentData $savedPaymentData,
         \Payone\Core\Model\Methods\Ratepay\Installment\Proxy $ratepayInstallment,
-        \Payone\Core\Helper\Toolkit $toolkitHelper
+        \Payone\Core\Helper\Toolkit $toolkitHelper,
+        \Payone\Core\Helper\Ratepay $ratepayHelper
     ) {
         parent::__construct($ccConfig, $dataHelper);
         $this->dataHelper = $dataHelper;
@@ -194,21 +204,18 @@ class ConfigProvider extends \Magento\Payment\Model\CcGenericConfigProvider
         $this->savedPaymentData = $savedPaymentData;
         $this->ratepayInstallment = $ratepayInstallment;
         $this->toolkitHelper = $toolkitHelper;
+        $this->ratepayHelper = $ratepayHelper;
     }
 
     /**
      * Get the payment description text
      *
-     * @param  string $sCode
+     * @param  PayoneMethod $sCode
      * @return string
      */
-    protected function getInstructionByCode($sCode)
+    protected function getInstructionByMethod($oMethodInstance)
     {
-        $oMethodInstance = $this->dataHelper->getMethodInstance($sCode);
-        if ($oMethodInstance) {
-            return nl2br($this->escaper->escapeHtml($oMethodInstance->getInstructions()));
-        }
-        return '';
+        return nl2br($this->escaper->escapeHtml($oMethodInstance->getInstructions()));
     }
 
     /**
@@ -257,8 +264,6 @@ class ConfigProvider extends \Magento\Payment\Model\CcGenericConfigProvider
             'bankCodeValidatedAndValid' => false,
             'blockedMessage' => $this->paymentHelper->getBankaccountCheckBlockedMessage(),
             'epsBankGroups' => Eps::getBankGroups(),
-            'idealBankGroups' => Ideal::getBankGroups(),
-            'customerBirthday' => $this->customerHelper->getCustomerBirthday(),
             'addresscheckEnabled' => (int)$this->requestHelper->getConfigParam('enabled', 'address_check', 'payone_protect'),
             'addresscheckBillingEnabled' => $this->requestHelper->getConfigParam('check_billing', 'address_check', 'payone_protect') == 'NO' ? 0 : 1,
             'addresscheckShippingEnabled' => $this->requestHelper->getConfigParam('check_shipping', 'address_check', 'payone_protect') == 'NO' ? 0 : 1,
@@ -274,11 +279,11 @@ class ConfigProvider extends \Magento\Payment\Model\CcGenericConfigProvider
             'orderDeferredExists' => (bool)version_compare($this->shopHelper->getMagentoVersion(), '2.1.0', '>='),
             'saveCCDataEnabled' => (bool)$this->requestHelper->getConfigParam('save_data_enabled', PayoneConfig::METHOD_CREDITCARD, 'payone_payment'),
             'savedPaymentData' => $this->savedPaymentData->getSavedPaymentData($this->checkoutSession->getQuote()->getCustomerId(), PayoneConfig::METHOD_CREDITCARD),
-            'isPaydirektOneKlickDisplayable' => $this->isPaydirektOneKlickDisplayable(),
             'currency' => $this->requestHelper->getConfigParam('currency'),
             'klarnaTitles' => $this->paymentHelper->getKlarnaMethodTitles(),
             'storeName' => $this->shopHelper->getStoreName(),
-            'ratepayAllowedMonths' => $this->getRatepayAllowedMonths(),
+            'ratepay' => $this->getRatepayConfig(),
+            'ratepayRefreshed' => false,
             'bnpl' => $this->getBNPLConfig(),
         ];
     }
@@ -297,7 +302,11 @@ class ConfigProvider extends \Magento\Payment\Model\CcGenericConfigProvider
             ],
         ]);
         foreach ($this->paymentHelper->getAvailablePaymentTypes() as $sCode) {
-            $config['payment']['instructions'][$sCode] = $this->getInstructionByCode($sCode);
+            $oMethodInstance = $this->dataHelper->getMethodInstance($sCode);
+            if ($oMethodInstance instanceof PayoneMethod && $oMethodInstance->isAvailable()) {
+                $config['payment']['payone'][$sCode] = $oMethodInstance->getFrontendConfig();
+                $config['payment']['instructions'][$sCode] = $this->getInstructionByMethod($oMethodInstance);
+            }
         }
         return $config;
     }
@@ -318,24 +327,18 @@ class ConfigProvider extends \Magento\Payment\Model\CcGenericConfigProvider
     }
 
     /**
-     * Check if paydirekt oneklick is enabled, user is logged in and not yet marked as registered with paydirekt
+     * Return ratepay config for all ratepay payment methods
      *
-     * @return bool
+     * @return array
      */
-    protected function isPaydirektOneKlickDisplayable()
+    protected function getRatepayConfig()
     {
-        if ($this->customerSession->isLoggedIn() && (bool)$this->customerSession->getCustomer()->getPayonePaydirektRegistered() === false) {
-            return (bool)$this->requestHelper->getConfigParam('oneklick_active', PayoneConfig::METHOD_PAYDIREKT, 'payone_payment');
-        }
-        return false;
-    }
+        $aReturn = $this->ratepayHelper->getRatepayConfig();
 
-    protected function getRatepayAllowedMonths()
-    {
-        if ($this->paymentHelper->isPaymentMethodActive(PayoneConfig::METHOD_RATEPAY_INSTALLMENT) === true) {
-            return $this->ratepayInstallment->getAllowedMonths();
+        if (isset($aReturn[PayoneConfig::METHOD_RATEPAY_INSTALLMENT])) {
+            $aReturn[PayoneConfig::METHOD_RATEPAY_INSTALLMENT]['allowedMonths'] = $this->ratepayInstallment->getAllowedMonths();
         }
-        return [];
+        return $aReturn;
     }
 
     /**
@@ -383,14 +386,17 @@ class ConfigProvider extends \Magento\Payment\Model\CcGenericConfigProvider
                 'environment' => [ // "t" for TEST, "p" for PROD
                     PayoneConfig::METHOD_BNPL_INVOICE => $this->requestHelper->getConfigParam('mode', PayoneConfig::METHOD_BNPL_INVOICE, 'payone_payment') == 'live' ? 'p' : 't',
                     PayoneConfig::METHOD_BNPL_INSTALLMENT => $this->requestHelper->getConfigParam('mode', PayoneConfig::METHOD_BNPL_INSTALLMENT, 'payone_payment') == 'live' ? 'p' : 't',
+                    PayoneConfig::METHOD_BNPL_DEBIT => $this->requestHelper->getConfigParam('mode', PayoneConfig::METHOD_BNPL_DEBIT, 'payone_payment') == 'live' ? 'p' : 't',
                 ],
                 'mid' => [
                     PayoneConfig::METHOD_BNPL_INVOICE => $this->paymentHelper->getCustomConfigParam('mid', PayoneConfig::METHOD_BNPL_INVOICE),
                     PayoneConfig::METHOD_BNPL_INSTALLMENT => $this->paymentHelper->getCustomConfigParam('mid', PayoneConfig::METHOD_BNPL_INSTALLMENT),
+                    PayoneConfig::METHOD_BNPL_DEBIT => $this->paymentHelper->getCustomConfigParam('mid', PayoneConfig::METHOD_BNPL_DEBIT),
                 ],
                 'differentAddressAllowed' => [
                     PayoneConfig::METHOD_BNPL_INVOICE => (bool)$this->requestHelper->getConfigParam('different_address_allowed', PayoneConfig::METHOD_BNPL_INVOICE, 'payment'),
                     PayoneConfig::METHOD_BNPL_INSTALLMENT => (bool)$this->requestHelper->getConfigParam('different_address_allowed', PayoneConfig::METHOD_BNPL_INSTALLMENT, 'payment'),
+                    PayoneConfig::METHOD_BNPL_DEBIT => (bool)$this->requestHelper->getConfigParam('different_address_allowed', PayoneConfig::METHOD_BNPL_DEBIT, 'payment'),
                 ],
                 'payla_partner_id' => BNPLBase::BNPL_PARTNER_ID,
                 'uuid' => $this->getUUID(),

@@ -31,11 +31,15 @@
     <preference for="Payone\Core\Api\Data\InstallmentPlanResponseInterface" type="Payone\Core\Service\V1\Data\InstallmentPlanResponse" />
     <preference for="Payone\Core\Api\EditAddressInterface" type="Payone\Core\Service\V1\EditAddress" />
     <preference for="Payone\Core\Api\Data\EditAddressInterface" type="Payone\Core\Service\V1\Data\EditAddressResponse" />
+    <preference for="Payone\Core\Api\RatepayConfigInterface" type="Payone\Core\Service\V1\RatepayConfig" />
+    <preference for="Payone\Core\Api\Data\RatepayConfigInterface" type="Payone\Core\Service\V1\Data\RatepayConfigResponse" />
     <preference for="Payone\Core\Api\AmazonPayInterface" type="Payone\Core\Service\V1\AmazonPay" />
     <preference for="Payone\Core\Api\Data\AmazonPayResponseInterface" type="Payone\Core\Service\V1\Data\AmazonPayResponse" />
     <preference for="Payone\Core\Api\KlarnaHandlerInterface" type="Payone\Core\Service\V1\KlarnaHandler" />
     <preference for="Payone\Core\Api\ApplePayInterface" type="Payone\Core\Service\V1\ApplePay" />
     <preference for="Payone\Core\Api\Data\KlarnaHandlerResponseInterface" type="Payone\Core\Service\V1\Data\KlarnaHandlerResponse" />
+    <preference for="Payone\Core\Api\PayPalInterface" type="Payone\Core\Service\V1\PayPal" />
+    <preference for="Payone\Core\Api\Data\PayPalResponseInterface" type="Payone\Core\Service\V1\Data\PayPalResponse" />
     <virtualType name="Payone\Core\Model\ResourceModel\ApiLog\Grid\Collection" type="Magento\Framework\View\Element\UiComponent\DataProvider\SearchResult">
         <arguments>
             <argument name="mainTable" xsi:type="string">payone_protocol_api</argument>
@@ -131,11 +135,6 @@
     <type name="Payone\Core\Controller\Transactionstatus\Index">
         <arguments>
             <argument name="substituteOrder" xsi:type="object">Payone\Core\Model\Handler\SubstituteOrder\Proxy</argument>
-        </arguments>
-    </type>
-    <type name="Payone\Core\Observer\AddPaydirektOneklickButton">
-        <arguments>
-            <argument name="customerSession" xsi:type="object">Magento\Customer\Model\Session\Proxy</argument>
         </arguments>
     </type>
     <type name="Payone\Core\Model\Handler\SubstituteOrder">

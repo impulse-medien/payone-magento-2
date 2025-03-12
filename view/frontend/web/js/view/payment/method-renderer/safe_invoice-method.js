@@ -25,9 +25,10 @@ define(
     [
         'Payone_Core/js/view/payment/method-renderer/base',
         'mage/translate',
-        'Magento_Checkout/js/model/quote'
+        'Magento_Checkout/js/model/quote',
+        'Magento_Customer/js/model/customer'
     ],
-    function (Component, $t, quote) {
+    function (Component, $t, quote, customer) {
         'use strict';
         return Component.extend({
             defaults: {
@@ -48,34 +49,57 @@ define(
             isB2bMode: function () {
                 if (quote.billingAddress() !== null &&
                     typeof quote.billingAddress().company !== 'undefined' &&
-                    quote.billingAddress().company !== ''
+                    quote.billingAddress().company !== '' &&
+                    quote.billingAddress().company !== null
                 ) {
                     return true;
                 }
                 return false;
             },
             requestBirthday: function () {
-                if (window.checkoutConfig.payment.payone.customerBirthday === false && !this.isB2bMode()) {
+                if ((customer.customerData.dob == undefined || customer.customerData.dob === null) && !this.isB2bMode()) {
                     return true;
                 }
                 return false;
             },
+            getBirthDate: function () {
+                return this.birthyear() + "-" + this.birthmonth() + "-" + this.birthday();
+            },
             isCustomerTooYoung: function () {
-                if (window.checkoutConfig.payment.payone.customerBirthday !== false) {
-                    var sBirthDate = window.checkoutConfig.payment.payone.customerBirthday;
-                } else {
-                    var sBirthDate = this.birthyear() + "-" + this.birthmonth() + "-" + this.birthday();
-                }
-                var oBirthDate = new Date(sBirthDate);
+                var oBirthDate = new Date(this.getBirthDate());
                 var oMinDate = new Date(new Date().setYear(new Date().getFullYear() - 18));
                 if(oBirthDate < oMinDate) {
                     return false;
                 }
                 return true;
             },
+            isCustomerTooOld: function () {
+                var oBirthDate = new Date(this.getBirthDate());
+                var oMinDate = new Date(new Date().setYear(new Date().getFullYear() - 125)); // max 125 years
+                if(oBirthDate > oMinDate) {
+                    return false;
+                }
+                return true;
+            },
+            isDateInFuture: function () {
+                var oBirthDate = new Date(this.getBirthDate());
+                var oDateNow = new Date();
+                if (oBirthDate > oDateNow) {
+                    return true;
+                }
+                return false;
+            },
             validate: function () {
-                if (!this.isB2bMode() && this.isCustomerTooYoung()) {
+                if (this.requestBirthday() === true && (this.isDateValid(this.birthyear(), this.birthmonth(), this.birthday()) === false || this.isDateInFuture())) {
+                    this.messageContainer.addErrorMessage({'message': $t('Please enter a valid birthdate.')});
+                    return false;
+                }
+                if (this.requestBirthday() === true && this.isCustomerTooYoung()) {
                     this.messageContainer.addErrorMessage({'message': $t('You have to be at least 18 years old to use this payment type!')});
+                    return false;
+                }
+                if (this.requestBirthday() === true && this.isCustomerTooOld()) {
+                    this.messageContainer.addErrorMessage({'message': $t('An error occured. Please check the supplied data.')});
                     return false;
                 }
                 return true;
@@ -85,9 +109,11 @@ define(
                 if (parentReturn.additional_data === null) {
                     parentReturn.additional_data = {};
                 }
-                parentReturn.additional_data.birthday = this.birthday();
-                parentReturn.additional_data.birthmonth = this.birthmonth();
-                parentReturn.additional_data.birthyear = this.birthyear();
+                if (this.requestBirthday() === true) {
+                    parentReturn.additional_data.birthday = this.birthday();
+                    parentReturn.additional_data.birthmonth = this.birthmonth();
+                    parentReturn.additional_data.birthyear = this.birthyear();
+                }
                 return parentReturn;
             },
             /** Returns payment method instructions */

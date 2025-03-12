@@ -108,7 +108,7 @@ class Toolkit extends \Payone\Core\Helper\Base
     {
         $aKeyValues = $this->getAllPayoneSecurityKeys();
         foreach ($aKeyValues as $sConfigKey) {
-            if (md5($sConfigKey ?? '') == $sKey) {
+            if ($this->hashString($sConfigKey ?? '', 'md5') == $sKey) {
                 return true;
             }
         }
@@ -213,7 +213,7 @@ class Toolkit extends \Payone\Core\Helper\Base
      */
     public function isUTF8($sString)
     {
-        return $sString === mb_convert_encoding(mb_convert_encoding($sString, "UTF-32", "UTF-8"), "UTF-8", "UTF-32");
+        return $sString === mb_convert_encoding(mb_convert_encoding($sString ?? '', "UTF-32", "UTF-8"), "UTF-8", "UTF-32");
     }
 
     /**
@@ -257,5 +257,22 @@ class Toolkit extends \Payone\Core\Helper\Base
 
         // Output the 36 character UUID.
         return vsprintf('%s%s-%s-%s-%s-%s%s%s', str_split(bin2hex($data), 4));
+    }
+
+    /**
+     * In the Payone universe different hash mechanisms are needed
+     * Returns a hashed string and defines a default through the sAlgorithm parameter
+     *
+     * @param  string $sString
+     * @param  string $sAlgorithm
+     * @param  string $sKey
+     * @return string
+     */
+    public function hashString($sString, $sAlgorithm = 'sha384', $sKey = false)
+    {
+        if ($sAlgorithm == "sha384" && $sKey !== false) {
+            return hash_hmac($sAlgorithm, $sString, $sKey ?? '');
+        }
+        return hash($sAlgorithm, $sString);
     }
 }

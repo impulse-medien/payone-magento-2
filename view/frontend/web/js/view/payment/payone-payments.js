@@ -49,6 +49,10 @@ define(
                 component: 'Payone_Core/js/view/payment/method-renderer/paypal-method'
             },
             {
+                type: 'payone_paypalv2',
+                component: 'Payone_Core/js/view/payment/method-renderer/paypalv2-method'
+            },
+            {
                 type: 'payone_advance_payment',
                 component: 'Payone_Core/js/view/payment/method-renderer/advance_payment-method'
             },
@@ -60,10 +64,10 @@ define(
                 type: 'payone_obt_sofortueberweisung',
                 component: 'Payone_Core/js/view/payment/method-renderer/obt_sofortueberweisung-method'
             },
-            {
+            /*{
                 type: 'payone_obt_giropay',
                 component: 'Payone_Core/js/view/payment/method-renderer/obt_giropay-method'
-            },
+            }, Giropay has been disabled, Paydirekt is now Giropay */
             {
                 type: 'payone_obt_eps',
                 component: 'Payone_Core/js/view/payment/method-renderer/obt_eps-method'
@@ -117,6 +121,10 @@ define(
                 component: 'Payone_Core/js/view/payment/method-renderer/amazonpay-method'
             },
             {
+                type: 'payone_amazonpayv2',
+                component: 'Payone_Core/js/view/payment/method-renderer/amazonpayv2-method'
+            },
+            {
                 type: 'payone_klarna_base',
                 component: 'Payone_Core/js/view/payment/method-renderer/klarna-method'
             },
@@ -164,10 +172,10 @@ define(
                 type: 'payone_bnpl_invoice',
                 component: 'Payone_Core/js/view/payment/method-renderer/bnpl_invoice-method'
             },
-            /*BNPL_DEBIT_DEACTIVATED{
+            {
                 type: 'payone_bnpl_debit',
                 component: 'Payone_Core/js/view/payment/method-renderer/bnpl_debit-method'
-            },*/
+            },
             {
                 type: 'payone_bnpl_installment',
                 component: 'Payone_Core/js/view/payment/method-renderer/bnpl_installment-method'

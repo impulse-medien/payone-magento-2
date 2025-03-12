@@ -49,6 +49,13 @@ class AliPay extends PayoneMethod
     protected $sClearingtype = 'wlt';
 
     /**
+     * Wallettype for PAYONE requests
+     *
+     * @var string|bool
+     */
+    protected $sWallettype = 'ALP';
+
+    /**
      * Determines if the redirect-parameters have to be added
      * to the authorization-request
      *
@@ -64,6 +71,6 @@ class AliPay extends PayoneMethod
      */
     public function getPaymentSpecificParameters(Order $oOrder)
     {
-        return ['wallettype' => 'ALP'];
+        return ['wallettype' => $this->getWallettype()];
     }
 }

@@ -121,6 +121,11 @@
                     <frontend_model>Payone\Core\Block\Adminhtml\Config\Form\Field\StatusMapping</frontend_model>
                     <backend_model>Payone\Core\Model\Config\Backend\SerializedOrJson</backend_model>
                 </field>
+                <field id="payone_paypalv2" translate="label" sortOrder="35" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>PayPal V2</label>
+                    <frontend_model>Payone\Core\Block\Adminhtml\Config\Form\Field\StatusMapping</frontend_model>
+                    <backend_model>Payone\Core\Model\Config\Backend\SerializedOrJson</backend_model>
+                </field>
                 <field id="payone_cash_on_delivery" translate="label" sortOrder="40" showInDefault="1" showInWebsite="1" showInStore="1">
                     <label>Cash on Delivery</label>
                     <frontend_model>Payone\Core\Block\Adminhtml\Config\Form\Field\StatusMapping</frontend_model>
@@ -141,11 +146,11 @@
                     <frontend_model>Payone\Core\Block\Adminhtml\Config\Form\Field\StatusMapping</frontend_model>
                     <backend_model>Payone\Core\Model\Config\Backend\SerializedOrJson</backend_model>
                 </field>
-                <field id="payone_obt_giropay" translate="label" sortOrder="120" showInDefault="1" showInWebsite="1" showInStore="1">
+                <!--field id="payone_obt_giropay" translate="label" sortOrder="120" showInDefault="1" showInWebsite="1" showInStore="1">
                     <label>giropay</label>
                     <frontend_model>Payone\Core\Block\Adminhtml\Config\Form\Field\StatusMapping</frontend_model>
                     <backend_model>Payone\Core\Model\Config\Backend\SerializedOrJson</backend_model>
-                </field>
+                </field Giropay has been disabled, Paydirekt is now Giropay -->
                 <field id="payone_obt_eps" translate="label" sortOrder="130" showInDefault="1" showInWebsite="1" showInStore="1">
                     <label>eps - Online-Ueberweisung</label>
                     <frontend_model>Payone\Core\Block\Adminhtml\Config\Form\Field\StatusMapping</frontend_model>
@@ -177,7 +182,7 @@
                     <backend_model>Payone\Core\Model\Config\Backend\SerializedOrJson</backend_model>
                 </field>
                 <field id="payone_paydirekt" translate="label" sortOrder="200" showInDefault="1" showInWebsite="1" showInStore="1">
-                    <label>Paydirekt</label>
+                    <label>Giropay</label>
                     <frontend_model>Payone\Core\Block\Adminhtml\Config\Form\Field\StatusMapping</frontend_model>
                     <backend_model>Payone\Core\Model\Config\Backend\SerializedOrJson</backend_model>
                 </field>
@@ -208,6 +213,11 @@
                 </field>
                 <field id="payone_amazonpay" translate="label" sortOrder="270" showInDefault="1" showInWebsite="1" showInStore="1">
                     <label>Amazon Pay</label>
+                    <frontend_model>Payone\Core\Block\Adminhtml\Config\Form\Field\StatusMapping</frontend_model>
+                    <backend_model>Magento\Config\Model\Config\Backend\Serialized\ArraySerialized</backend_model>
+                </field>
+                <field id="payone_amazonpayv2" translate="label" sortOrder="270" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Amazon Pay V2</label>
                     <frontend_model>Payone\Core\Block\Adminhtml\Config\Form\Field\StatusMapping</frontend_model>
                     <backend_model>Magento\Config\Model\Config\Backend\Serialized\ArraySerialized</backend_model>
                 </field>
@@ -267,11 +277,11 @@
                     <frontend_model>Payone\Core\Block\Adminhtml\Config\Form\Field\StatusMapping</frontend_model>
                     <backend_model>Payone\Core\Model\Config\Backend\SerializedOrJson</backend_model>
                 </field>
-                <!--BNPL_DEBIT_DEACTIVATED field id="payone_bnpl_debit" translate="label" sortOrder="380" showInDefault="1" showInWebsite="1" showInStore="1">
+                <field id="payone_bnpl_debit" translate="label" sortOrder="380" showInDefault="1" showInWebsite="1" showInStore="1">
                     <label>BNPL Safe Debit</label>
                     <frontend_model>Payone\Core\Block\Adminhtml\Config\Form\Field\StatusMapping</frontend_model>
                     <backend_model>Payone\Core\Model\Config\Backend\SerializedOrJson</backend_model>
-                </field-->
+                </field>
                 <field id="payone_bnpl_installment" translate="label" sortOrder="390" showInDefault="1" showInWebsite="1" showInStore="1">
                     <label>BNPL Safe Installment</label>
                     <frontend_model>Payone\Core\Block\Adminhtml\Config\Form\Field\StatusMapping</frontend_model>
@@ -302,11 +312,12 @@
             <include path="Payone_Core::system/payone_creditcard.xml"/>
             <include path="Payone_Core::system/payone_debit.xml"/>
             <include path="Payone_Core::system/payone_paypal.xml"/>
+            <include path="Payone_Core::system/payone_paypalv2.xml"/>
             <include path="Payone_Core::system/payone_cash_on_delivery.xml"/>
             <include path="Payone_Core::system/payone_advance_payment.xml"/>
             <include path="Payone_Core::system/payone_invoice.xml"/>
             <include path="Payone_Core::system/payone_obt_sofortueberweisung.xml"/>
-            <include path="Payone_Core::system/payone_obt_giropay.xml"/>
+            <!--include path="Payone_Core::system/payone_obt_giropay.xml"/ Giropay has been disabled, Paydirekt is now Giropay -->
             <include path="Payone_Core::system/payone_obt_eps.xml"/>
             <include path="Payone_Core::system/payone_obt_postfinance_efinance.xml"/>
             <include path="Payone_Core::system/payone_obt_postfinance_card.xml"/>
@@ -320,6 +331,7 @@
             <include path="Payone_Core::system/payone_payolution_installment.xml"/>
             <include path="Payone_Core::system/payone_alipay.xml"/>
             <include path="Payone_Core::system/payone_amazonpay.xml"/>
+            <include path="Payone_Core::system/payone_amazonpayv2.xml"/>
             <include path="Payone_Core::system/payone_klarna_base.xml"/>
             <include path="Payone_Core::system/payone_klarna_invoice.xml"/>
             <include path="Payone_Core::system/payone_klarna_debit.xml"/>
@@ -332,7 +344,7 @@
             <include path="Payone_Core::system/payone_applepay.xml"/>
             <include path="Payone_Core::system/payone_bancontact.xml"/>
             <include path="Payone_Core::system/payone_bnpl_invoice.xml"/>
-            <!--BNPL_DEBIT_DEACTIVATED include path="Payone_Core::system/payone_bnpl_debit.xml"/-->
+            <include path="Payone_Core::system/payone_bnpl_debit.xml"/>
             <include path="Payone_Core::system/payone_bnpl_installment.xml"/>
         </section>
         <section id="payone_protect" translate="label" type="text" sortOrder="30" showInDefault="1" showInWebsite="1" showInStore="1">

@@ -36,3 +36,11 @@
 .payoneClear {
     clear:both;
 }
+
+.payoneBNPLselector {
+    margin-bottom:0.7em;
+}
+
+#payone-paypal-button-minibasket {
+    margin-top: 1em;
+}

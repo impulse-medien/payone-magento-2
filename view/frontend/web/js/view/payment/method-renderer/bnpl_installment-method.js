@@ -39,7 +39,6 @@ define(
                 birthmonth: '',
                 birthyear: '',
                 telephone: '',
-                bankaccountholder: '',
                 iban: '',
                 optionid: ''
             },
@@ -51,7 +50,6 @@ define(
                         'birthyear',
                         'telephone',
                         'telephone',
-                        'bankaccountholder',
                         'iban',
                         'optionid'
                     ]);
@@ -87,7 +85,6 @@ define(
             getData: function () {
                 var parentReturn = this._super();
                 parentReturn.additional_data.optionid = this.optionid();
-                parentReturn.additional_data.bankaccountholder = this.bankaccountholder();
                 parentReturn.additional_data.iban = this.getCleanedNumber(this.iban());
                 return parentReturn;
             },
@@ -96,18 +93,29 @@ define(
                 if (parentReturn === false) {
                     return parentReturn;
                 }
-                if (this.bankaccountholder() == '') {
-                    this.messageContainer.addErrorMessage({'message': $t('Please enter your bank account holder information.')});
-                    return false;
-                }
                 if (this.iban() == '') {
                     this.messageContainer.addErrorMessage({'message': $t('Please enter a valid IBAN.')});
                     return false;
                 }
                 return parentReturn;
             },
-            displayInstallmentInfo(installmentplan) {
+            addEvents: function (selectorClass, delimiter, valueCount) {
+                var elementsColl = document.getElementsByClassName(selectorClass);
+                for (var iVar = 0; iVar < elementsColl.length; iVar++) {
+                    console.log(elementsColl[iVar].previousElementSibling);
+                    elementsColl[iVar].previousElementSibling.addEventListener("click", function (e) {
+                        console.log(this.nextElementSibling);
+                        let splitVar = this.nextElementSibling.value.split(delimiter);
+                        if (splitVar.length === valueCount) {
+                            switchBNPLInstallmentPlan(splitVar[0], splitVar[1], splitVar[2], this);
+                        }
+                        e.preventDefault();
+                    });
+                }
+            },
+            displayInstallmentInfo: function (installmentplan) {
                 $('#' + this.getCode() + '_installmentplan').html(installmentplan.installment_plan_html);
+                this.addEvents("hiddenSwitchInstallmentPlanBnpl", "|||", 3);
                 $('#' + this.getCode() + '_installmentplan').show();
                 $('#' + this.getCode() + '_check').hide();
                 $('#' + this.getCode() + '_submit').show();

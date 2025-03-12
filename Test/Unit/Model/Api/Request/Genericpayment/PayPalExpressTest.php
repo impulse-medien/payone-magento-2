@@ -32,6 +32,7 @@ use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 use Payone\Core\Helper\Api;
 use Payone\Core\Helper\Shop;
 use Payone\Core\Model\Methods\Paypal;
+use Payone\Core\Model\Methods\PaypalV2;
 use Payone\Core\Test\Unit\BaseTestCase;
 use Payone\Core\Test\Unit\PayoneObjectManager;
 
@@ -85,6 +86,7 @@ class PayPalExpressTest extends BaseTestCase
         $response = ['status' => 'APPROVED'];
         $this->apiHelper->method('sendApiRequest')->willReturn($response);
         $this->apiHelper->method('getQuoteAmount')->willReturn(100);
+        $this->apiHelper->method('isInvoiceDataNeeded')->willReturn(true);
 
         $result = $this->classToTest->sendRequest($quote, $payment, 100);
         $this->assertEquals($response, $result);
@@ -99,7 +101,7 @@ class PayPalExpressTest extends BaseTestCase
         $quote->method('getGrandTotal')->willReturn(123);
         $quote->method('getQuoteCurrencyCode')->willReturn('EUR');
 
-        $payment = $this->getMockBuilder(Paypal::class)->disableOriginalConstructor()->getMock();
+        $payment = $this->getMockBuilder(PaypalV2::class)->disableOriginalConstructor()->getMock();
         $payment->method('getOperationMode')->willReturn('test');
         $payment->method('getSuccessUrl')->willReturn('http://testdomain.com');
         $payment->method('getErrorUrl')->willReturn('http://testdomain.com');

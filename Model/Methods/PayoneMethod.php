@@ -48,6 +48,16 @@ abstract class PayoneMethod extends BaseMethod
     }
 
     /**
+     * Returns wallettype
+     *
+     * @return string
+     */
+    public function getWallettype()
+    {
+        return $this->sWallettype;
+    }
+
+    /**
      * Returns authorization-mode
      * preauthorization or authorization
      *
@@ -444,5 +454,14 @@ abstract class PayoneMethod extends BaseMethod
     public function getNarrativeTextMaxLength()
     {
         return $this->iNarrativeTextMax;
+    }
+
+    /**
+     * @return array
+     */
+    public function getFrontendConfig()
+    {
+        // Hook to be overloaded by child classes
+        return [];
     }
 }

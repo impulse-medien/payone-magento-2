@@ -19,7 +19,7 @@
  * @category  Payone
  * @package   Payone_Magento2_Plugin
  * @author    FATCHIP GmbH <support@fatchip.de>
- * @copyright 2003 - 2016 Payone GmbH
+ * @copyright 2003 - 2024 Payone GmbH
  * @license   <http://www.gnu.org/licenses/> GNU Lesser General Public License
  * @link      http://www.payone.de
  */
@@ -32,7 +32,7 @@ namespace Payone\Core\Model;
 abstract class PayoneConfig
 {
     /* Module version */
-    const MODULE_VERSION = '3.7.0';
+    const MODULE_VERSION = '3.13.2';
 
     /* Authorization request types */
     const REQUEST_TYPE_PREAUTHORIZATION = 'preauthorization';
@@ -68,6 +68,7 @@ abstract class PayoneConfig
     const METHOD_ADVANCE_PAYMENT = 'payone_advance_payment';
     const METHOD_INVOICE = 'payone_invoice';
     const METHOD_PAYPAL = 'payone_paypal';
+    const METHOD_PAYPALV2 = 'payone_paypalv2';
     const METHOD_OBT_SOFORTUEBERWEISUNG = 'payone_obt_sofortueberweisung';
     const METHOD_OBT_GIROPAY = 'payone_obt_giropay';
     const METHOD_OBT_EPS = 'payone_obt_eps';
@@ -89,6 +90,7 @@ abstract class PayoneConfig
     const METHOD_ALIPAY = 'payone_alipay';
     const METHOD_WECHATPAY = 'payone_wechatpay';
     const METHOD_AMAZONPAY = 'payone_amazonpay';
+    const METHOD_AMAZONPAYV2 = 'payone_amazonpayv2';
     const METHOD_RATEPAY_INVOICE = 'payone_ratepay_invoice';
     const METHOD_RATEPAY_INSTALLMENT = 'payone_ratepay_installment';
     const METHOD_RATEPAY_DEBIT = 'payone_ratepay_debit';
@@ -105,4 +107,10 @@ abstract class PayoneConfig
     const METHOD_GROUP_KLARNA = 'payone_klarna';
     const METHOD_GROUP_RATEPAY = 'payone_ratepay';
     const METHOD_GROUP_BNPL = 'payone_bnpl';
+
+    const METHODS_RATEPAY = [
+        self::METHOD_RATEPAY_INVOICE,
+        self::METHOD_RATEPAY_DEBIT,
+        self::METHOD_RATEPAY_INSTALLMENT,
+    ];
 }

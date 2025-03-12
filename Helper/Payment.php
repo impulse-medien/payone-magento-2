@@ -44,11 +44,12 @@ class Payment extends \Payone\Core\Helper\Base
         PayoneConfig::METHOD_CREDITCARD,
         PayoneConfig::METHOD_DEBIT,
         PayoneConfig::METHOD_PAYPAL,
+        PayoneConfig::METHOD_PAYPALV2,
         PayoneConfig::METHOD_CASH_ON_DELIVERY,
         PayoneConfig::METHOD_ADVANCE_PAYMENT,
         PayoneConfig::METHOD_INVOICE,
         PayoneConfig::METHOD_OBT_SOFORTUEBERWEISUNG,
-        PayoneConfig::METHOD_OBT_GIROPAY,
+        #PayoneConfig::METHOD_OBT_GIROPAY,#Giropay has been disabled, Paydirekt is now Giropay
         PayoneConfig::METHOD_OBT_EPS,
         PayoneConfig::METHOD_OBT_POSTFINANCE_EFINANCE,
         PayoneConfig::METHOD_OBT_POSTFINANCE_CARD,
@@ -62,6 +63,7 @@ class Payment extends \Payone\Core\Helper\Base
         PayoneConfig::METHOD_PAYOLUTION_INSTALLMENT,
         PayoneConfig::METHOD_ALIPAY,
         PayoneConfig::METHOD_AMAZONPAY,
+        PayoneConfig::METHOD_AMAZONPAYV2,
         PayoneConfig::METHOD_KLARNA_BASE,
         PayoneConfig::METHOD_KLARNA_DEBIT,
         PayoneConfig::METHOD_KLARNA_INVOICE,
@@ -73,7 +75,7 @@ class Payment extends \Payone\Core\Helper\Base
         PayoneConfig::METHOD_BANCONTACT,
         PayoneConfig::METHOD_BNPL_INVOICE,
         PayoneConfig::METHOD_BNPL_INSTALLMENT,
-        //BNPL_DEBIT_DEACTIVATED PayoneConfig::METHOD_BNPL_DEBIT,
+        PayoneConfig::METHOD_BNPL_DEBIT,
     ];
 
     /**
@@ -95,6 +97,7 @@ class Payment extends \Payone\Core\Helper\Base
         PayoneConfig::METHOD_OBT_IDEAL => 'sb',
         PayoneConfig::METHOD_OBT_PRZELEWY => 'sb',
         PayoneConfig::METHOD_PAYPAL => 'wlt',
+        PayoneConfig::METHOD_PAYPALV2 => 'wlt',
         PayoneConfig::METHOD_PAYDIREKT => 'wlt',
         PayoneConfig::METHOD_BARZAHLEN => 'csh',
         PayoneConfig::METHOD_SAFE_INVOICE => 'rec',
@@ -103,6 +106,7 @@ class Payment extends \Payone\Core\Helper\Base
         PayoneConfig::METHOD_PAYOLUTION_INSTALLMENT => 'fnc',
         PayoneConfig::METHOD_ALIPAY => 'wlt',
         PayoneConfig::METHOD_AMAZONPAY => 'wlt',
+        PayoneConfig::METHOD_AMAZONPAYV2 => 'wlt',
         PayoneConfig::METHOD_KLARNA_BASE => 'wlt',
         PayoneConfig::METHOD_KLARNA_DEBIT => 'wlt',
         PayoneConfig::METHOD_KLARNA_INVOICE => 'wlt',
@@ -238,7 +242,17 @@ class Payment extends \Payone\Core\Helper\Base
      */
     public function isPayPalExpressActive()
     {
-        return (bool)$this->getConfigParam('express_active', PayoneConfig::METHOD_PAYPAL, 'payone_payment');
+        return (bool)$this->getConfigParam('express_active', PayoneConfig::METHOD_PAYPAL, 'payone_payment') && $this->isPaymentMethodActive(PayoneConfig::METHOD_PAYPAL);
+    }
+
+    /**
+     * Return is PayPal Express V2 is activated in the configuration
+     *
+     * @return bool
+     */
+    public function isPayPalExpressV2Active()
+    {
+        return (bool)$this->getConfigParam('express_active', PayoneConfig::METHOD_PAYPALV2, 'payone_payment') && $this->isPaymentMethodActive(PayoneConfig::METHOD_PAYPALV2);
     }
 
     /**
