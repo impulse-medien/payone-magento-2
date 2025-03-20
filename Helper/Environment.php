@@ -75,7 +75,7 @@ class Environment extends \Payone\Core\Helper\Base
     {
         $blProxyMode = (bool)$this->getConfigParam('proxy_mode', 'processing', 'payone_misc');
         $sClientIp = $this->request->getClientIp($blProxyMode); // may return a comma separated ip list like "<client>, <proxy1>, <proxy2>"
-        $aSplitIp = explode(",", $sClientIp); // split by comma
+        $aSplitIp = explode(",", $sClientIp ?? ''); // split by comma
         return trim(current($aSplitIp)); // return first array element
     }
 
@@ -101,7 +101,7 @@ class Environment extends \Payone\Core\Helper\Base
                 $sRegex = preg_quote($sIP, $sDelimiter);
                 $sRegex = str_replace('\*', '\d{1,3}', $sRegex);
                 $sRegex = $sDelimiter.'^'.$sRegex.'$'.$sDelimiter;
-                
+
                 preg_match($sRegex, $sRemoteIp, $aMatches);
                 if (is_array($aMatches) && !empty($aMatches) && $aMatches[0] == $sRemoteIp) {
                     return true;
